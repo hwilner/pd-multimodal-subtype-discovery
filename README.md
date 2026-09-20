@@ -61,5 +61,7 @@ Parkinson's disease, AMP-PD, PPMI, subtyping, SuStaIn, multi-omics, reproducible
 ## Documentation
 
 - [Introduction for new readers](docs/INTRODUCTION.md)
+- [Extended introduction (no background required)](docs/EXTENDED_INTRODUCTION.md)
+- [Methods: decisions and rationale](docs/METHODS.md)
 - [AMP-PD data access](docs/DATA_ACCESS.md)
 - [Contributing](CONTRIBUTING.md)
