@@ -1,0 +1,18 @@
+{
+  "n_subjects": 240,
+  "n_features": 12,
+  "n_subtypes": 2,
+  "sustain_log_likelihood": -4097.824547397406,
+  "sustain_vs_consensus_ari": 0.40943611048655204,
+  "train_cohort": "PPMI",
+  "cross_cohort": {
+    "PDBP": {
+      "assignment_ari": 0.9499907048898689,
+      "signature_correlation": 0.9973692883582177
+    },
+    "BioFIND": {
+      "assignment_ari": 1.0,
+      "signature_correlation": 0.989693599876239
+    }
+  }
+}

@@ -1,0 +1,13 @@
+cohort,view,n_subjects,n_features,frac_missing,n_constant_features
+PPMI,clinical,80,4,0.0,0
+PPMI,imaging,80,3,0.0,0
+PPMI,datscan,80,2,0.0,0
+PPMI,csf,80,3,0.0,0
+PDBP,clinical,80,4,0.0,0
+PDBP,imaging,80,3,0.0,0
+PDBP,datscan,80,2,0.0,0
+PDBP,csf,80,3,0.0,0
+BioFIND,clinical,80,4,0.0,0
+BioFIND,imaging,80,3,0.0,0
+BioFIND,datscan,80,2,0.0,0
+BioFIND,csf,80,3,0.0,0
