@@ -2,6 +2,22 @@
 
 **Series note:** This is **Paper 1 of 3** in the Parkinson's disease (PD) multimodal subtyping series. It is the **foundation paper**: it discovers and validates data-driven PD subtypes in AMP-PD that Paper 2 (`pd-progression-prediction-stratification`) and Paper 3 (`pd-blood-transcriptomic-proxy`) directly reuse.
 
+## Concept figure
+
+The pipeline in one picture — four AMP-PD cohorts are harmonized across clinical, imaging, and CSF features; SuStaIn and multi-view clustering propose subtypes; and only structure that survives cross-cohort transfer becomes the open subtype assignments reused by Papers 2 and 3 (standalone version: [figures/concept_figure.md](figures/concept_figure.md)):
+
+```mermaid
+flowchart LR
+    subgraph C["AMP-PD cohorts"]
+        A1["PPMI"] & A2["PDBP"] & A3["BioFIND"] & A4["LCC"]
+    end
+    C --> H["Harmonization<br/>clinical + MRI + DaTscan + CSF"]
+    H --> SU["SuStaIn<br/>subtypes + stages"]
+    H --> MV["Multi-view clustering"]
+    SU & MV --> X{"Cross-cohort<br/>reproducibility"}
+    X --> O["Open subtype assignments<br/>for Papers 2 & 3"]
+```
+
 ## Background
 
 Parkinson's disease (PD) is the second most common neurodegenerative disorder and one of the most heterogeneous. Two patients with the same initial diagnosis — bradykinesia plus rest tremor or rigidity — can follow radically different courses: some remain stable for a decade, others progress rapidly to gait failure, falls, and dementia. This heterogeneity is a core challenge in modern PD research and management [1]. Neuropathologically, PD is defined by the loss of nigrostriatal dopamine neurons and by the accumulation of misfolded alpha-synuclein in Lewy bodies and Lewy neurites, and there is growing evidence that distinct patterns of alpha-synuclein spread underlie distinct clinical trajectories, motivating biologically grounded rather than purely symptomatic disease definitions [1].
