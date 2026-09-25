@@ -20,6 +20,7 @@ class SubtypeAssignmentModel:
     """
 
     def __init__(self) -> None:
+        """Initialize the instance."""
         self.centroids_: pd.DataFrame | None = None
 
     def fit(self, features: pd.DataFrame, labels: np.ndarray) -> "SubtypeAssignmentModel":
@@ -30,8 +31,7 @@ class SubtypeAssignmentModel:
         return self
 
     def predict(self, features: pd.DataFrame) -> np.ndarray:
-        """Assign each subject to the nearest subtype centroid (correlation
-        distance on subtype signatures)."""
+        """Assign each subject to the nearest subtype centroid (correlation distance on subtype signatures)."""
         if self.centroids_ is None:
             raise RuntimeError("Model not fitted.")
         X = features[self.centroids_.columns].to_numpy(dtype=float)
@@ -68,8 +68,7 @@ def assignment_agreement(labels_true: np.ndarray, labels_pred: np.ndarray) -> fl
 def subtype_signature_correlation(
     model: SubtypeAssignmentModel, features: pd.DataFrame, labels: np.ndarray
 ) -> pd.Series:
-    """Correlation between training-cohort subtype signatures and the
-    signatures estimated in a held-out cohort (replication metric).
+    """Correlation between training-cohort subtype signatures and the signatures estimated in a held-out cohort (replication metric).
 
     Labels are matched by maximum signature correlation.
     """

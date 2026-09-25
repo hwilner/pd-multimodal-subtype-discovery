@@ -19,16 +19,16 @@ def zscore_within_cohort(
     Parameters
     ----------
     features:
-        Rows are subjects, columns are features.
+    Rows are subjects, columns are features.
     cohort:
-        Cohort label per row, aligned with ``features.index``.
+    Cohort label per row, aligned with ``features.index``.
     eps:
-        Small constant added to the standard deviation for stability.
+    Small constant added to the standard deviation for stability.
 
-    Returns
+    Returns:
     -------
     pd.DataFrame
-        Feature matrix with per-cohort mean 0 and std 1 per feature.
+    Feature matrix with per-cohort mean 0 and std 1 per feature.
     """
     cohort = pd.Series(cohort, index=features.index)
     out = features.copy().astype(float)
@@ -54,18 +54,18 @@ def combat_batch_correction(
     Parameters
     ----------
     features:
-        Rows are subjects, columns are features.
+    Rows are subjects, columns are features.
     cohort:
-        Cohort (batch) label per row.
+    Cohort (batch) label per row.
     covariates:
-        Optional biological covariates to preserve (one row per subject).
+    Optional biological covariates to preserve (one row per subject).
     eps:
-        Numerical stability constant.
+    Numerical stability constant.
 
-    Returns
+    Returns:
     -------
     pd.DataFrame
-        Batch-corrected feature matrix.
+    Batch-corrected feature matrix.
     """
     X = features.to_numpy(dtype=float)
     cohort = pd.Series(cohort, index=features.index).to_numpy()
@@ -106,16 +106,16 @@ def harmonize(
     Parameters
     ----------
     features:
-        Rows are subjects, columns are features.
+    Rows are subjects, columns are features.
     cohort:
-        Cohort label per row.
+    Cohort label per row.
     covariates:
-        Optional biological covariates preserved during batch correction.
+    Optional biological covariates preserved during batch correction.
 
-    Returns
+    Returns:
     -------
     pd.DataFrame
-        Harmonized, globally standardized feature matrix.
+    Harmonized, globally standardized feature matrix.
     """
     corrected = combat_batch_correction(features, cohort, covariates=covariates)
     return (corrected - corrected.mean()) / (corrected.std(ddof=0) + 1e-8)

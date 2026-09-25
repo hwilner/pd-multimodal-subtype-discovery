@@ -27,6 +27,7 @@ from pd_subtypes import amppd
 
 
 def main() -> None:
+    """Main."""
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     src = p.add_mutually_exclusive_group(required=True)
     src.add_argument("--terra-export", type=Path,

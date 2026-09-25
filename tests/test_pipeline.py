@@ -11,6 +11,11 @@ from pd_subtypes.sustain import SuStaInModel
 
 @pytest.fixture(scope="module")
 def dataset():
+    """Dataset.
+
+    Returns:
+        The result.
+    """
     return simulate.simulate_dataset(
         n_per_cohort=60, n_subtypes=2, signal=2.0, noise=0.8,
         batch_shift=1.5, random_state=42,
@@ -19,6 +24,14 @@ def dataset():
 
 @pytest.fixture(scope="module")
 def harmonized(dataset):
+    """Harmonized.
+
+    Args:
+        dataset: dataset.
+
+    Returns:
+        The result.
+    """
     out = {}
     for name, view in dataset.views.items():
         out[name] = harmonize.harmonize(view, dataset.cohort)
@@ -26,6 +39,12 @@ def harmonized(dataset):
 
 
 def test_harmonization_removes_planted_cohort_shifts(dataset, harmonized):
+    """Test harmonization removes planted cohort shifts.
+
+    Args:
+        dataset: dataset.
+        harmonized: harmonized.
+    """
     for name, view in dataset.views.items():
         before = harmonize.cohort_shift_magnitude(view, dataset.cohort).mean()
         after = harmonize.cohort_shift_magnitude(harmonized[name], dataset.cohort).mean()
@@ -33,6 +52,11 @@ def test_harmonization_removes_planted_cohort_shifts(dataset, harmonized):
 
 
 def test_zscore_within_cohort(dataset):
+    """Test zscore within cohort.
+
+    Args:
+        dataset: dataset.
+    """
     view = dataset.views["clinical"]
     z = harmonize.zscore_within_cohort(view, dataset.cohort)
     for c in dataset.cohort.unique():
@@ -42,6 +66,12 @@ def test_zscore_within_cohort(dataset):
 
 
 def test_sustain_recovers_planted_subtypes(dataset, harmonized):
+    """Test sustain recovers planted subtypes.
+
+    Args:
+        dataset: dataset.
+        harmonized: harmonized.
+    """
     X = pd.concat(harmonized.values(), axis=1)
     model = SuStaInModel(n_subtypes=2, n_init=6, random_state=0).fit(X)
     ari = adjusted_rand_score(dataset.subtype, model.subtype_labels_)
@@ -49,12 +79,24 @@ def test_sustain_recovers_planted_subtypes(dataset, harmonized):
 
 
 def test_multiview_consensus_recovers_structure(dataset, harmonized):
+    """Test multiview consensus recovers structure.
+
+    Args:
+        dataset: dataset.
+        harmonized: harmonized.
+    """
     labels = multiview.consensus_clustering(harmonized, n_clusters=2)
     ari = adjusted_rand_score(dataset.subtype, labels)
     assert ari > 0.4, f"consensus ARI {ari:.3f} below threshold"
 
 
 def test_assignment_model_transfers_across_cohorts(dataset, harmonized):
+    """Test assignment model transfers across cohorts.
+
+    Args:
+        dataset: dataset.
+        harmonized: harmonized.
+    """
     X = pd.concat(harmonized.values(), axis=1)
     cohorts = dataset.cohort.unique()
     train_c, test_c = cohorts[0], cohorts[1]
@@ -75,6 +117,11 @@ def test_assignment_model_transfers_across_cohorts(dataset, harmonized):
 
 
 def test_simulation_shapes(dataset):
+    """Test simulation shapes.
+
+    Args:
+        dataset: dataset.
+    """
     assert len(dataset.cohort) == 180
     assert set(dataset.views) == {"clinical", "imaging", "datscan", "csf"}
     assert dataset.features.shape[1] == 20

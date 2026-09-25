@@ -21,22 +21,22 @@ class SuStaInModel:
     Parameters
     ----------
     n_subtypes:
-        Number of disease subtypes to infer.
+    Number of disease subtypes to infer.
     z_threshold:
-        Z-score threshold above which a biomarker is considered abnormal
-        (an "event").
+    Z-score threshold above which a biomarker is considered abnormal
+    (an "event").
     n_stages:
-        Number of disease stages per sequence. Defaults to the number of
-        biomarkers (one event per stage).
+    Number of disease stages per sequence. Defaults to the number of
+    biomarkers (one event per stage).
     n_init:
-        Number of random restarts; the run with the best log-likelihood
-        is kept.
+    Number of random restarts; the run with the best log-likelihood
+    is kept.
     max_iter:
-        Maximum EM iterations per restart.
+    Maximum EM iterations per restart.
     tol:
-        Convergence tolerance on the log-likelihood.
+    Convergence tolerance on the log-likelihood.
     random_state:
-        Seed for reproducibility.
+    Seed for reproducibility.
     """
 
     def __init__(
@@ -49,6 +49,17 @@ class SuStaInModel:
         tol: float = 1e-4,
         random_state: int = 0,
     ) -> None:
+        """Initialize the instance.
+
+        Args:
+        n_subtypes (int): n subtypes.
+        z_threshold (float): z threshold.
+        n_stages (int | None): n stages.
+        n_init (int): n init.
+        max_iter (int): max iter.
+        tol (float): tol.
+        random_state (int): random state.
+        """
         self.n_subtypes = n_subtypes
         self.z_threshold = z_threshold
         self.n_stages = n_stages
@@ -65,14 +76,14 @@ class SuStaInModel:
         Parameters
         ----------
         features:
-            Z-scored feature matrix (subjects x biomarkers); larger values
-            indicate greater abnormality.
+        Z-scored feature matrix (subjects x biomarkers); larger values
+        indicate greater abnormality.
 
-        Returns
+        Returns:
         -------
         SuStaInModel
-            Fitted model with ``sequences_``, ``subtype_proba_``,
-            ``stages_`` and ``log_likelihood_``.
+        Fitted model with ``sequences_``, ``subtype_proba_``,
+        ``stages_`` and ``log_likelihood_``.
         """
         X = features.to_numpy(dtype=float)
         n, n_bio = X.shape
@@ -177,6 +188,14 @@ class SuStaInModel:
         return resp.argmax(axis=1)
 
     def predict_stage(self, features: pd.DataFrame) -> np.ndarray:
+        """Predict stage.
+
+        Args:
+        features (pd.DataFrame): features.
+
+        Returns:
+        np.ndarray: the stage.
+        """
         X = features.to_numpy(dtype=float)
         resp, stage_post, _ = self._e_step(X, self.sequences_, self.n_stages_)
         labels = resp.argmax(axis=1)

@@ -10,6 +10,11 @@ from pd_subtypes.sustain import SuStaInModel
 
 
 def test_missing_export_raises_with_access_pointer(tmp_path):
+    """Test missing export raises with access pointer.
+
+    Args:
+        tmp_path: tmp path.
+    """
     with pytest.raises(amppd.AMPPDDataNotFoundError) as excinfo:
         amppd.load_terra_export(tmp_path / "empty")
     assert "docs/DATA_ACCESS.md" in str(excinfo.value)
@@ -17,10 +22,20 @@ def test_missing_export_raises_with_access_pointer(tmp_path):
 
 @pytest.fixture(scope="module")
 def semi_synthetic():
+    """Semi synthetic.
+
+    Returns:
+        The synthetic.
+    """
     return amppd.simulate_semi_synthetic(n_per_cohort=40, random_state=0)
 
 
 def test_semi_synthetic_structure(semi_synthetic):
+    """Test semi synthetic structure.
+
+    Args:
+        semi_synthetic: semi synthetic.
+    """
     ds = semi_synthetic
     assert len(ds.cohort) == 120
     assert set(ds.views) == set(amppd.VIEWS)
@@ -29,6 +44,12 @@ def test_semi_synthetic_structure(semi_synthetic):
 
 
 def test_terra_export_roundtrip(semi_synthetic, tmp_path):
+    """Test terra export roundtrip.
+
+    Args:
+        semi_synthetic: semi synthetic.
+        tmp_path: tmp path.
+    """
     amppd.write_terra_export(semi_synthetic, tmp_path)
     views = amppd.load_terra_export(tmp_path)
     matrices, cohort = amppd.build_feature_matrices(views)

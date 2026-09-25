@@ -87,7 +87,7 @@ def load_terra_export(export_dir: str | Path) -> dict[str, pd.DataFrame]:
     ``subject_id`` column and numeric feature columns. Cohorts are
     stacked per view; subject IDs are prefixed with their cohort.
 
-    Returns
+    Returns:
     -------
     dict mapping view name -> DataFrame (subjects x features), with a
     ``cohort`` entry (pd.Series) aligned to the view rows.
@@ -136,10 +136,10 @@ def integrity_check(views: dict[str, pd.DataFrame]) -> pd.DataFrame:
     Parameters
     ----------
     views:
-        Output of :func:`load_terra_export` (view name -> matrix, plus a
-        ``cohort`` Series).
+    Output of :func:`load_terra_export` (view name -> matrix, plus a
+    ``cohort`` Series).
 
-    Returns
+    Returns:
     -------
     pd.DataFrame with one row per (cohort, view): n_subjects,
     n_features, frac_missing, n_constant_features.

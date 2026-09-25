@@ -23,6 +23,7 @@ from pd_subtypes.sustain import SuStaInModel
 
 
 def main() -> None:
+    """Main."""
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--prepared", type=Path, default=Path("data/prepared"),
                    help="Directory written by scripts/prepare_amppd.py.")
