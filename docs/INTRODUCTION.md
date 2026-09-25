@@ -6,17 +6,9 @@
 
 The pipeline in one picture — four AMP-PD cohorts are harmonized across clinical, imaging, and CSF features; SuStaIn and multi-view clustering propose subtypes; and only structure that survives cross-cohort transfer becomes the open subtype assignments reused by Papers 2 and 3 (standalone version: [figures/concept_figure.md](figures/concept_figure.md)):
 
-```mermaid
-flowchart LR
-    subgraph C["AMP-PD cohorts"]
-        A1["PPMI"] & A2["PDBP"] & A3["BioFIND"] & A4["LCC"]
-    end
-    C --> H["Harmonization<br/>clinical + MRI + DaTscan + CSF"]
-    H --> SU["SuStaIn<br/>subtypes + stages"]
-    H --> MV["Multi-view clustering"]
-    SU & MV --> X{"Cross-cohort<br/>reproducibility"}
-    X --> O["Open subtype assignments<br/>for Papers 2 & 3"]
-```
+![Concept figure: three data modalities are aligned per patient and clustered, and only structure transferring across cohorts is kept](figures/01-concept-schematic.png)
+
+*Figure 1: Three data modalities are aligned per patient and clustered, and only structure transferring across cohorts is kept. (Editable Mermaid source: [figures/concept_figure.md](figures/concept_figure.md).)*
 
 ## Background
 
