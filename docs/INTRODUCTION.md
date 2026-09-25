@@ -1,10 +1,8 @@
 # Introduction — PD Multimodal Subtype Discovery
 
-**Series note:** This is **Paper 1 of 3** in the Parkinson's disease (PD) multimodal subtyping series. It is the **foundation paper**: it discovers and validates data-driven PD subtypes in AMP-PD that Paper 2 (`pd-progression-prediction-stratification`) and Paper 3 (`pd-blood-transcriptomic-proxy`) directly reuse.
-
 ## Concept figure
 
-The pipeline in one picture — four AMP-PD cohorts are harmonized across clinical, imaging, and CSF features; SuStaIn and multi-view clustering propose subtypes; and only structure that survives cross-cohort transfer becomes the open subtype assignments reused by Papers 2 and 3 (standalone version: [figures/concept_figure.md](figures/concept_figure.md)):
+The pipeline in one picture — four AMP-PD cohorts are harmonized across clinical, imaging, and CSF features; SuStaIn and multi-view clustering propose subtypes; and only structure that survives cross-cohort transfer becomes the open subtype assignments released for reuse (standalone version: [figures/concept_figure.md](figures/concept_figure.md)):
 
 ![Concept figure: three data modalities are aligned per patient and clustered, and only structure transferring across cohorts is kept](figures/01-concept-schematic.png)
 
@@ -46,17 +44,17 @@ Clinical subtyping has a long tradition, from tremor-dominant versus postural-in
 
 **Subtype discovery.** We apply SuStaIn [6] to derive data-driven subtypes and within-subtype staging, and multi-view clustering as an independent comparator that integrates modalities without a progression model. Agreement between approaches is quantified, and the number of subtypes is selected by internal validity criteria and out-of-sample stability.
 
-**Cross-cohort reproducibility.** Subtypes are discovered in PPMI; participants from PDBP, BioFIND, and LCC are then assigned with the trained models. Reproducibility is assessed via assignment confidence, matched clinical/biomarker subtype profiles, and replication of subtype–genotype associations [7]. All assignment code is released openly so Papers 2 and 3 — and other groups — reuse identical subtype definitions.
+**Cross-cohort reproducibility.** Subtypes are discovered in PPMI; participants from PDBP, BioFIND, and LCC are then assigned with the trained models. Reproducibility is assessed via assignment confidence, matched clinical/biomarker subtype profiles, and replication of subtype–genotype associations [7]. All assignment code is released openly so that later studies — and other groups — reuse identical subtype definitions.
 
 ## Expected contributions
 
-1. Validated, multimodal, cross-cohort PD subtypes with open assignment code — the shared foundation of the series.
+1. Validated, multimodal, cross-cohort PD subtypes with open assignment code — a shared, reusable foundation.
 2. A reproducibility audit quantifying how much of prior single-cohort PD subtype structure survives independent replication.
 3. Harmonization pipelines and derived feature sets for AMP-PD that the community can reuse.
 
 ## Scope and boundary
 
-- Subtype discovery and validation only. Longitudinal progression prediction is Paper 2; blood transcriptomic proxies are Paper 3.
+- Subtype discovery and validation only; longitudinal progression prediction and blood transcriptomic proxies are left to later work.
 - No wet-lab data generation; public/Tier 2 AMP-PD data under DUA only.
 - Subtypes are observational constructs; no causal or interventional claims.
 

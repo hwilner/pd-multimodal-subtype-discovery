@@ -2,7 +2,7 @@
 
 **No background in neuroscience, medicine, or statistics required.** Every technical idea on this page is first worked out on a tiny made-up example you can check with pencil and paper, then given intuition, then — only at the end — its formal name, used as shorthand for the procedure you already did. For the scientific version with full references, see [INTRODUCTION.md](INTRODUCTION.md); citations like [1] refer to that file's reference list.
 
-**Concept figure.** Four AMP-PD cohorts are harmonized across clinical scores, MRI, DaTscan, and CSF; two discovery engines (SuStaIn and multi-view clustering) propose subtypes; and only structure that survives cross-cohort transfer becomes the open subtype assignments reused by Papers 2 and 3 (standalone version: [figures/concept_figure.md](figures/concept_figure.md)):
+**Concept figure.** Four AMP-PD cohorts are harmonized across clinical scores, MRI, DaTscan, and CSF; two discovery engines (SuStaIn and multi-view clustering) propose subtypes; and only structure that survives cross-cohort transfer becomes the open subtype assignments released for reuse (standalone version: [figures/concept_figure.md](figures/concept_figure.md)):
 
 ```mermaid
 flowchart LR
@@ -13,7 +13,7 @@ flowchart LR
     H --> SU["SuStaIn<br/>subtypes + stages"]
     H --> MV["Multi-view clustering"]
     SU & MV --> X{"Cross-cohort<br/>reproducibility"}
-    X --> O["Open subtype assignments<br/>for Papers 2 & 3"]
+    X --> O["Open subtype assignments<br/>shared openly"]
 ```
 
 ## 1. What is Parkinson's disease?
@@ -155,18 +155,6 @@ flowchart TD
 
 Current status is important: the full pipeline above is **implemented and tested end-to-end on a semi-synthetic stand-in dataset**, but **no real patient data has been analyzed yet**. Real-data analysis is blocked pending the AMP-PD Tier 2 Data Use Agreement (see [DATA_ACCESS.md](DATA_ACCESS.md) and [METHODS.md](METHODS.md) for the Done-vs-Intended breakdown).
 
-## 10. Where this paper sits in the series
-
-This repository is **Paper 1 of 3** — the foundation. Papers 2 and 3 reuse the subtype definitions discovered here, which is why reproducibility and open assignment code matter so much.
-
-```mermaid
-flowchart TD
-    P1["Paper 1 (this repo)<br/>pd-multimodal-subtype-discovery<br/>Discover + validate multimodal PD subtypes"]
-    P2["Paper 2<br/>pd-progression-prediction-stratification<br/>Predict progression within each subtype"]
-    P3["Paper 3<br/>pd-blood-transcriptomic-proxy<br/>Blood gene-expression proxy for the subtypes"]
-    P1 --> P2
-    P1 --> P3
-```
 
 ## 11. Glossary cheat-sheet
 

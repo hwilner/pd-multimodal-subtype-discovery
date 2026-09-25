@@ -170,7 +170,7 @@ phrased more cautiously.
 
 ### Parametric vs. non-parametric: a decision guide
 
-Later tasks (e.g., comparing progression slopes between subtypes, Paper 2
+Later tasks (e.g., comparing progression slopes between subtypes
 territory) force a choice:
 
 - **Parametric** (e.g., linear mixed-effects models for longitudinal slopes):

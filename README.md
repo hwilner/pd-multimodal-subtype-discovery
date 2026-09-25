@@ -1,10 +1,6 @@
-# PD Multimodal Subtype Discovery (Paper 1)
+# PD Multimodal Subtype Discovery 
 
 This independent research repository plans and tracks multimodal Parkinson's disease subtype discovery (imaging + clinical + transcriptomics) with cross-cohort reproducibility in AMP-PD. It provides multi-view clustering utilities for transparent review and extension.
-
-## Series position
-
-This is **Paper 1** of the Parkinson's multimodal series (3 papers). It is the foundation of the series; Papers 2–3 build on its subtype definitions and harmonized dataset.
 
 ## Research plan
 
@@ -13,7 +9,7 @@ This is **Paper 1** of the Parkinson's multimodal series (3 papers). It is the f
 | AMP-PD access (free DUA via Terra) + harmonization of PPMI/PDBP/BioFIND | Versioned multimodal dataset (3,274 participants). |
 | Multi-view subtype discovery (imaging + clinical events; SuStaIn-style) | Reproducible PD subtypes. |
 | Cross-cohort reproducibility (PPMI vs. PDBP) | Replication report. |
-| Release subtype assignments + harness | Reused by Papers 2–3. |
+| Release subtype assignments + harness | Reusable by later work. |
 
 **Current status:** codebase scaffolded with synthetic-data validation; the AMP-PD Terra staging pipeline (`pd_subtypes.amppd` + `scripts/`) is implemented and the full harmonize → SuStaIn → cross-cohort pipeline has been validated end-to-end on a documented semi-synthetic stand-in built from published summary statistics (see `reports/`); AMP-PD Tier 2 DUA to be requested; no real-data analysis has been run. See [docs/DATA_ACCESS.md](docs/DATA_ACCESS.md).
 
