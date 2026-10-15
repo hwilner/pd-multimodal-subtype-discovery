@@ -1,0 +1,59 @@
+# Continuous integration for the pd-subtypes package.
+#
+# The README advertises a "CI workflow (pytest, Python 3.10-3.12)"; until
+# this file existed the advertised workflow had never been committed and
+# the repository had zero GitHub Actions runs, so the test suite was
+# never gated on any change. These checks keep that promise honest.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Run on manual dispatch so a maintainer can reproduce a CI verdict
+  # without pushing a commit.
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref so a busy branch does not queue
+# up stale jobs that report on an old SHA.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: pytest (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      # A failure anywhere is a failure; do not hide a broken version
+      # behind a passing one.
+      fail-fast: false
+      matrix:
+        # Matches requires-python = ">=3.10" in pyproject.toml and the
+        # 3.10-3.12 range claimed in README.md.
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install package and dev extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Verify the test suite collects
+        # Fails fast if a test module cannot even be imported, instead of
+        # reporting a green run with zero tests executed.
+        run: python -m pytest --collect-only -q
+
+      - name: Run test suite
+        run: python -m pytest -v --maxfail=1

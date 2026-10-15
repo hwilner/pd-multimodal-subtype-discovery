@@ -86,13 +86,20 @@ def load_terra_export(export_dir: str | Path) -> dict[str, pd.DataFrame]:
     ``<COHORT>_<view>.tsv`` (e.g. ``PPMI_clinical.tsv``), each with a
     ``subject_id`` column and numeric feature columns. Cohorts are
     stacked per view; subject IDs are prefixed with their cohort.
+    Cohorts may be missing views, and individual views may therefore
+    carry different subject sets.
 
     Returns:
     -------
     dict mapping view name -> DataFrame (subjects x features), with a
-    ``cohort`` entry (pd.Series) aligned to the view rows.
+    ``cohort`` entry (pd.Series) labelling every staged subject. The
+    ``cohort`` Series is indexed by the union of all staged subjects,
+    so it may be longer than an individual view; consumers must
+    intersect it with each view (as :func:`integrity_check` and
+    :func:`build_feature_matrices` do) rather than assume equal length.
 
     Raises :class:`AMPPDDataNotFoundError` if no matching TSVs exist.
+    ValueError if a staged export repeats a ``subject_id``.
     """
     export_dir = Path(export_dir)
     found: dict[str, list[pd.DataFrame]] = {}
@@ -100,7 +107,11 @@ def load_terra_export(export_dir: str | Path) -> dict[str, pd.DataFrame]:
         for view in VIEWS:
             path = export_dir / export_filename(cohort, view)
             if path.exists():
-                df = pd.read_csv(path, sep="\t")
+                # subject_id is an opaque identifier, never a quantity: read it
+                # as text so that zero-padded IDs (e.g. "0007") are not
+                # silently rewritten to "7" and stop matching the published
+                # AMP-PD manifest.
+                df = pd.read_csv(path, sep="\t", dtype={"subject_id": str})
                 if "subject_id" not in df.columns:
                     raise ValueError(f"{path}: missing required 'subject_id' column")
                 df["subject_id"] = cohort + "-" + df["subject_id"].astype(str)
@@ -118,14 +129,26 @@ def load_terra_export(export_dir: str | Path) -> dict[str, pd.DataFrame]:
             "semi-synthetic stand-in."
         )
     views = {view: pd.concat(frames) for view, frames in found.items()}
-    cohort = pd.Series(
-        np.repeat(
-            [f.attrs["cohort"] for f in next(iter(found.values()))],
-            [len(f) for f in next(iter(found.values()))],
-        ),
-        index=next(iter(views.values())).index,
-        name="cohort",
-    )
+    # A subject's cohort is a property of the subject, not of the view it
+    # happened to be exported in, so the label map is built from every staged
+    # frame. Deriving it from a single view silently loses any cohort that is
+    # missing that view: the QC report then omits that cohort entirely and
+    # build_feature_matrices drops its subjects with no warning. AMP-PD
+    # cohorts routinely lack views (e.g. no CSF or DaTscan export for
+    # BioFIND), so this is the expected case, not an exotic one.
+    labels: dict[str, str] = {}
+    for frames in found.values():
+        for frame in frames:
+            duplicated = frame.index[frame.index.duplicated()].tolist()
+            if duplicated:
+                # A repeated subject_id would silently inflate row counts in
+                # every downstream matrix, so reject it at the boundary.
+                raise ValueError(
+                    f"duplicate subject_id in the {frame.attrs['cohort']} "
+                    f"export: {duplicated[:5]}"
+                )
+            labels.update(dict.fromkeys(frame.index, frame.attrs["cohort"]))
+    cohort = pd.Series(labels, name="cohort")
     views["cohort"] = cohort
     return views
 
@@ -175,6 +198,11 @@ def build_feature_matrices(
     mean-imputed within cohort; constant features are dropped. Returns
     (views dict without the cohort entry, aligned cohort Series) ready
     for :func:`pd_subtypes.harmonize.harmonize`.
+
+    A cohort that was staged but is absent from at least one view
+    contributes no subjects to the common set, so it is reported as a
+    warning rather than dropped silently. See :func:`integrity_check`
+    for the per-(cohort, view) breakdown behind such a warning.
     """
     cohort = views["cohort"]
     view_mats = {k: v for k, v in views.items() if k != "cohort"}
@@ -183,6 +211,20 @@ def build_feature_matrices(
         common = common.intersection(X.index)
     if len(common) == 0:
         raise ValueError("No subjects shared across all views.")
+
+    # Report cohorts lost to incomplete view coverage before narrowing the
+    # label Series, while the full staged set is still in hand.
+    staged_counts = cohort.value_counts()
+    kept_counts = cohort.loc[common].value_counts()
+    dropped = staged_counts.sub(kept_counts, fill_value=0)
+    dropped = dropped[dropped > 0]
+    if not dropped.empty:
+        import warnings
+
+        warnings.warn(
+            f"Cohort(s) dropped for incomplete view coverage "
+            f"(no subject present in every view): {dropped.to_dict()}"
+        )
     cohort = cohort.loc[common]
     out = {}
     for name, X in view_mats.items():
