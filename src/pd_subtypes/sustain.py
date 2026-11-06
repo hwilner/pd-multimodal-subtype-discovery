@@ -18,25 +18,17 @@ from scipy.stats import norm
 class SuStaInModel:
     """Simplified SuStaIn subtype-and-stage inference via EM.
 
-    Parameters
-    ----------
-    n_subtypes:
-    Number of disease subtypes to infer.
-    z_threshold:
-    Z-score threshold above which a biomarker is considered abnormal
-    (an "event").
-    n_stages:
-    Number of disease stages per sequence. Defaults to the number of
-    biomarkers (one event per stage).
-    n_init:
-    Number of random restarts; the run with the best log-likelihood
-    is kept.
-    max_iter:
-    Maximum EM iterations per restart.
-    tol:
-    Convergence tolerance on the log-likelihood.
-    random_state:
-    Seed for reproducibility.
+    Args:
+        n_subtypes: Number of disease subtypes to infer.
+        z_threshold: Z-score threshold above which a biomarker is
+            considered abnormal (an "event").
+        n_stages: Number of disease stages per sequence. Defaults to the
+            number of biomarkers (one event per stage).
+        n_init: Number of random restarts; the run with the best
+            log-likelihood is kept.
+        max_iter: Maximum EM iterations per restart.
+        tol: Convergence tolerance on the log-likelihood.
+        random_state: Seed for reproducibility.
     """
 
     def __init__(
@@ -52,13 +44,14 @@ class SuStaInModel:
         """Initialize the instance.
 
         Args:
-        n_subtypes (int): n subtypes.
-        z_threshold (float): z threshold.
-        n_stages (int | None): n stages.
-        n_init (int): n init.
-        max_iter (int): max iter.
-        tol (float): tol.
-        random_state (int): random state.
+            n_subtypes: Number of disease subtypes to infer.
+            z_threshold: Z-score threshold for the abnormality events.
+            n_stages: Stages per sequence; ``None`` selects one stage per
+                biomarker.
+            n_init: Number of random restarts.
+            max_iter: Maximum EM iterations per restart.
+            tol: Log-likelihood convergence tolerance.
+            random_state: Seed for reproducibility.
         """
         self.n_subtypes = n_subtypes
         self.z_threshold = z_threshold
@@ -73,17 +66,13 @@ class SuStaInModel:
     def fit(self, features: pd.DataFrame) -> "SuStaInModel":
         """Fit the event-sequence mixture model.
 
-        Parameters
-        ----------
-        features:
-        Z-scored feature matrix (subjects x biomarkers); larger values
-        indicate greater abnormality.
+        Args:
+            features: Z-scored feature matrix (subjects x biomarkers);
+                larger values indicate greater abnormality.
 
         Returns:
-        -------
-        SuStaInModel
-        Fitted model with ``sequences_``, ``subtype_proba_``,
-        ``stages_`` and ``log_likelihood_``.
+            The fitted model, with ``sequences_``, ``subtype_proba_``,
+            ``stages_`` and ``log_likelihood_`` attributes set.
         """
         X = features.to_numpy(dtype=float)
         n, n_bio = X.shape
@@ -182,7 +171,15 @@ class SuStaInModel:
     # -- helpers ---------------------------------------------------------
 
     def predict_subtype(self, features: pd.DataFrame) -> np.ndarray:
-        """Assign new subjects to subtypes (and stages) using fitted sequences."""
+        """Assign new subjects to subtypes (and stages) using fitted sequences.
+
+        Args:
+            features: Z-scored feature matrix (subjects x biomarkers) for
+                the new subjects.
+
+        Returns:
+            Integer subtype label per subject, in row order.
+        """
         X = features.to_numpy(dtype=float)
         resp, stage_post, _ = self._e_step(X, self.sequences_, self.n_stages_)
         return resp.argmax(axis=1)
@@ -191,10 +188,11 @@ class SuStaInModel:
         """Predict stage.
 
         Args:
-        features (pd.DataFrame): features.
+            features: Z-scored feature matrix (subjects x biomarkers).
 
         Returns:
-        np.ndarray: the stage.
+            Predicted stage per subject (argmax of the stage posterior
+            under each subject's most likely subtype).
         """
         X = features.to_numpy(dtype=float)
         resp, stage_post, _ = self._e_step(X, self.sequences_, self.n_stages_)

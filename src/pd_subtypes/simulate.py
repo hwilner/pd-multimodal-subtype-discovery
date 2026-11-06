@@ -49,26 +49,22 @@ def simulate_dataset(
 ) -> SyntheticDataset:
     """Simulate a multimodal multi-cohort PD-like dataset.
 
-    Parameters
-    ----------
-    n_per_cohort:
-        Subjects per cohort.
-    cohorts:
-        Cohort names.
-    n_subtypes:
-        Number of planted subtypes.
-    features_per_view:
-        Number of features per modality; defaults to a small balanced set.
-    n_stages:
-        Number of disease stages.
-    signal:
-        Effect size of an "abnormal" biomarker (in SD units).
-    noise:
-        Observation noise SD.
-    batch_shift:
-        SD of the per-cohort location shift added to each feature.
-    random_state:
-        Seed for reproducibility.
+    Args:
+        n_per_cohort: Subjects per cohort.
+        cohorts: Cohort names.
+        n_subtypes: Number of planted subtypes.
+        features_per_view: Number of features per modality; defaults to a
+            small balanced set.
+        n_stages: Number of disease stages.
+        signal: Effect size of an "abnormal" biomarker (in SD units).
+        noise: Observation noise SD.
+        batch_shift: SD of the per-cohort location shift added to each
+            feature.
+        random_state: Seed for reproducibility.
+
+    Returns:
+        A SyntheticDataset with per-view feature matrices, cohort,
+        subtype and stage labels, and the planted event sequences.
     """
     rng = np.random.default_rng(random_state)
     if features_per_view is None:

@@ -75,7 +75,15 @@ class AMPPDDataNotFoundError(FileNotFoundError):
 # ---------------------------------------------------------------------------
 
 def export_filename(cohort: str, view: str) -> str:
-    """Expected file name for a Terra-exported (cohort, view) table."""
+    """Expected file name for a Terra-exported (cohort, view) table.
+
+    Args:
+        cohort: Cohort name (e.g. ``"PPMI"``).
+        view: View (modality) name (e.g. ``"clinical"``).
+
+    Returns:
+        File name of the form ``<COHORT>_<view>.tsv``.
+    """
     return f"{cohort}_{view}.tsv"
 
 
@@ -89,17 +97,23 @@ def load_terra_export(export_dir: str | Path) -> dict[str, pd.DataFrame]:
     Cohorts may be missing views, and individual views may therefore
     carry different subject sets.
 
-    Returns:
-    -------
-    dict mapping view name -> DataFrame (subjects x features), with a
-    ``cohort`` entry (pd.Series) labelling every staged subject. The
-    ``cohort`` Series is indexed by the union of all staged subjects,
-    so it may be longer than an individual view; consumers must
-    intersect it with each view (as :func:`integrity_check` and
-    :func:`build_feature_matrices` do) rather than assume equal length.
+    Args:
+        export_dir: Directory containing the staged Terra export TSVs.
 
-    Raises :class:`AMPPDDataNotFoundError` if no matching TSVs exist.
-    ValueError if a staged export repeats a ``subject_id``.
+    Returns:
+        Dict mapping view name -> DataFrame (subjects x features), with a
+        ``cohort`` entry (pd.Series) labelling every staged subject. The
+        ``cohort`` Series is indexed by the union of all staged subjects,
+        so it may be longer than an individual view; consumers must
+        intersect it with each view (as :func:`integrity_check` and
+        :func:`build_feature_matrices` do) rather than assume equal
+        length.
+
+    Raises:
+        AMPPDDataNotFoundError: If no matching TSVs exist under
+            ``export_dir``.
+        ValueError: If a staged export repeats a ``subject_id`` or lacks
+            the required ``subject_id`` column.
     """
     export_dir = Path(export_dir)
     found: dict[str, list[pd.DataFrame]] = {}
@@ -156,16 +170,13 @@ def load_terra_export(export_dir: str | Path) -> dict[str, pd.DataFrame]:
 def integrity_check(views: dict[str, pd.DataFrame]) -> pd.DataFrame:
     """QC report for staged views: per-cohort/per-view counts and missingness.
 
-    Parameters
-    ----------
-    views:
-    Output of :func:`load_terra_export` (view name -> matrix, plus a
-    ``cohort`` Series).
+    Args:
+        views: Output of :func:`load_terra_export` (view name -> matrix,
+            plus a ``cohort`` Series).
 
     Returns:
-    -------
-    pd.DataFrame with one row per (cohort, view): n_subjects,
-    n_features, frac_missing, n_constant_features.
+        DataFrame with one row per (cohort, view): n_subjects,
+        n_features, frac_missing, n_constant_features.
     """
     cohort = views["cohort"]
     rows = []
@@ -195,14 +206,25 @@ def build_feature_matrices(
     """Align staged views to a common subject set and impute missing values.
 
     Subjects present in all views are kept; missing feature values are
-    mean-imputed within cohort; constant features are dropped. Returns
-    (views dict without the cohort entry, aligned cohort Series) ready
-    for :func:`pd_subtypes.harmonize.harmonize`.
+    mean-imputed within cohort; constant features are dropped.
 
     A cohort that was staged but is absent from at least one view
     contributes no subjects to the common set, so it is reported as a
     warning rather than dropped silently. See :func:`integrity_check`
     for the per-(cohort, view) breakdown behind such a warning.
+
+    Args:
+        views: Output of :func:`load_terra_export` (view name -> matrix,
+            plus a ``cohort`` Series).
+        min_subjects_per_cohort: Cohorts with fewer kept subjects than
+            this trigger a warning.
+
+    Returns:
+        Tuple of (views dict without the cohort entry, aligned cohort
+        Series) ready for :func:`pd_subtypes.harmonize.harmonize`.
+
+    Raises:
+        ValueError: If no subjects are shared across all views.
     """
     cohort = views["cohort"]
     view_mats = {k: v for k, v in views.items() if k != "cohort"}
@@ -252,6 +274,14 @@ def write_terra_export(dataset: SyntheticDataset, export_dir: str | Path) -> Non
 
     Used to exercise the staging path end-to-end (and in tests) with the
     semi-synthetic stand-in.
+
+    Args:
+        dataset: The synthetic dataset to write out.
+        export_dir: Destination directory; created if missing.
+
+    Returns:
+        None. One ``<COHORT>_<view>.tsv`` file is written per
+        (cohort, view) pair.
     """
     export_dir = Path(export_dir)
     export_dir.mkdir(parents=True, exist_ok=True)
@@ -289,6 +319,18 @@ def simulate_semi_synthetic(
     higher = more abnormal and expressed as z-scores relative to the
     published means/SDs; per-cohort batch shifts are added so the
     harmonization step has something to remove.
+
+    Args:
+        n_per_cohort: Subjects per cohort.
+        cohorts: Cohort names to simulate.
+        n_stages: Number of disease stages along each planted sequence.
+        batch_shift_sd: SD of the per-cohort location shift added to each
+            feature.
+        random_state: Seed for reproducibility.
+
+    Returns:
+        A SyntheticDataset with per-view feature matrices, cohort,
+        subtype and stage labels, and the two planted event sequences.
     """
     rng = np.random.default_rng(random_state)
     view_names = list(FEATURE_SPECS)

@@ -16,19 +16,13 @@ def zscore_within_cohort(
 ) -> pd.DataFrame:
     """Z-score each feature within each cohort.
 
-    Parameters
-    ----------
-    features:
-    Rows are subjects, columns are features.
-    cohort:
-    Cohort label per row, aligned with ``features.index``.
-    eps:
-    Small constant added to the standard deviation for stability.
+    Args:
+        features: Rows are subjects, columns are features.
+        cohort: Cohort label per row, aligned with ``features.index``.
+        eps: Small constant added to the standard deviation for stability.
 
     Returns:
-    -------
-    pd.DataFrame
-    Feature matrix with per-cohort mean 0 and std 1 per feature.
+        Feature matrix with per-cohort mean 0 and std 1 per feature.
     """
     cohort = pd.Series(cohort, index=features.index)
     out = features.copy().astype(float)
@@ -51,21 +45,15 @@ def combat_batch_correction(
     effects from each feature while optionally preserving variation
     explained by biological covariates (e.g. age, sex, diagnosis).
 
-    Parameters
-    ----------
-    features:
-    Rows are subjects, columns are features.
-    cohort:
-    Cohort (batch) label per row.
-    covariates:
-    Optional biological covariates to preserve (one row per subject).
-    eps:
-    Numerical stability constant.
+    Args:
+        features: Rows are subjects, columns are features.
+        cohort: Cohort (batch) label per row.
+        covariates: Optional biological covariates to preserve (one row
+            per subject).
+        eps: Numerical stability constant.
 
     Returns:
-    -------
-    pd.DataFrame
-    Batch-corrected feature matrix.
+        Batch-corrected feature matrix.
     """
     X = features.to_numpy(dtype=float)
     cohort = pd.Series(cohort, index=features.index).to_numpy()
@@ -103,19 +91,14 @@ def harmonize(
 ) -> pd.DataFrame:
     """Full harmonization pipeline: ComBat-style correction, then global z-score.
 
-    Parameters
-    ----------
-    features:
-    Rows are subjects, columns are features.
-    cohort:
-    Cohort label per row.
-    covariates:
-    Optional biological covariates preserved during batch correction.
+    Args:
+        features: Rows are subjects, columns are features.
+        cohort: Cohort label per row.
+        covariates: Optional biological covariates preserved during batch
+            correction.
 
     Returns:
-    -------
-    pd.DataFrame
-    Harmonized, globally standardized feature matrix.
+        Harmonized, globally standardized feature matrix.
     """
     corrected = combat_batch_correction(features, cohort, covariates=covariates)
     return (corrected - corrected.mean()) / (corrected.std(ddof=0) + 1e-8)
@@ -125,6 +108,14 @@ def cohort_shift_magnitude(features: pd.DataFrame, cohort: pd.Series) -> pd.Seri
     """Diagnostic: per-feature magnitude of the largest inter-cohort mean shift.
 
     Useful as a batch-effect diagnostic before/after harmonization.
+
+    Args:
+        features: Rows are subjects, columns are features.
+        cohort: Cohort label per row, aligned with ``features.index``.
+
+    Returns:
+        Per-feature maximum absolute deviation of any cohort's mean from
+        the global mean, indexed by feature name.
     """
     cohort = pd.Series(cohort, index=features.index)
     global_mean = features.mean()
