@@ -63,6 +63,7 @@ No real-data analysis has been run yet: it is gated on the AMP-PD Tier 2 DUA (is
 | `scripts/run_subtyping.py` | One-command pipeline: harmonize → SuStaIn subtypes/stages → multi-view consensus comparator → cross-cohort reproducibility; writes `reports/subtype_assignments.csv` + `reports/subtyping_summary.json`. |
 | `tests/` | Pytest suite validating the full pipeline on synthetic data (harmonization removes planted batch shifts; SuStaIn recovers planted subtypes; assignment transfers across cohorts) plus Terra-export staging tests on semi-synthetic fixtures. |
 | `reports/` | Small derived results from the semi-synthetic validation run (QC report, per-cohort subtype counts, summary metrics). Not real participant data. |
+| `reports/paper1/` | Paper 1 results package (demo track): one-command regeneration of Tables 1–3 and the demo cross-cohort figure from the committed artifacts (`make_tables.py` / `make_figures.py`), byte-parity tested. |
 | `docs/` | Research status, AMP-PD data-access steps, methods scope, and contribution guidance. |
 | `.github/` | CI workflow (pytest, Python 3.10–3.12), task issue template, and repo-card PR template. |
 
@@ -73,7 +74,7 @@ pip install -e ".[dev]"
 python -m pytest -q
 ```
 
-Latest verification: **13 passed / 0 failed** on `main` (2026-11-03, Python 3.12; see `docs/RESULTS.md` Table 9). CI runs the same suite on Python 3.10–3.12 (`.github/workflows/ci.yml`).
+Latest verification: **23 passed / 0 failed** on `main` (2026-11-18, Python 3.12; see `docs/RESULTS.md` Table 9). CI runs the same suite on Python 3.10–3.12 (`.github/workflows/ci.yml`).
 
 ## One-command pipeline
 

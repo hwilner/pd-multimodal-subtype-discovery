@@ -65,6 +65,23 @@ divergence is itself a triangulation finding to revisit once #12/#10 land.
 | PPMI → BioFIND assignment ARI | 1.000 |
 | PPMI → BioFIND subtype-signature correlation | 0.990 |
 
+**Figure 2 (demo, semi-synthetic stand-in).** Cross-cohort subtype transfer:
+assignment ARI against in-cohort labels and subtype-signature correlation for
+each held-out cohort (train: PPMI), the two pre-registered reproducibility
+metrics (`docs/METHODS.md`). Source:
+[`reports/paper1/figure2_cross_cohort_demo.svg`](../reports/paper1/figure2_cross_cohort_demo.svg),
+rendered deterministically from `reports/subtyping_summary.json` by
+`reports/paper1/make_figures.py`. Semi-synthetic stand-in — **not real
+participant data**; the real-data Figure 2 below remains an issue-gated
+placeholder. No numeric pass/fail thresholds are drawn because none have been
+pre-registered yet (they are fixed in issue #18).
+
+Tables 1–3 and the demo figure are regenerated from the committed artifacts
+with one command (`python reports/paper1/make_tables.py && python
+reports/paper1/make_figures.py`; see `reports/paper1/README.md`); byte-parity
+and artifact-consistency are enforced by `tests/test_paper1_package.py`
+(issue #15, demo track).
+
 ## Pre-registered results (real-data, issue-gated)
 
 **Table 4. Harmonization QC report (real AMP-PD data).** _Placeholder._ Rows:
@@ -112,6 +129,7 @@ programme visit. The 2026-11-02 row reproduces the record in the root
 |---|---|---|---|---|
 | 2026-11-02 | main (CI-hardening pass) | 13 passed / 0 failed / 0 skipped | 6.6 s | Python 3.11, CPU |
 | 2026-11-03 | main @ 1f92412 | **13 passed / 0 failed / 0 skipped** | 2.6 s | Python 3.12.12, CPU, numpy 2.2.5, pandas 2.3.2, scipy 1.16.2, scikit-learn 1.7.2, pytest 9.2.0 |
+| 2026-11-18 | main @ 14f212e + this change set | **23 passed / 0 failed / 0 skipped** | 2.0 s | Python 3.12.12, CPU, numpy 2.2.5, pandas 2.3.2, scipy 1.16.2, scikit-learn 1.7.2, pytest 9.2.0 |
 
 Heavy compute (real AMP-PD harmonization #2/#14, SuStaIn grid #12, cross-cohort
 validation #3/#18, reproducibility re-run #19): **deferred (needs
